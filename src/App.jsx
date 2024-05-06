@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./Card";
 import "tachyons";
 
@@ -7,49 +7,39 @@ import SearchBox from "./SearchBox";
 import "./App.css";
 import Scroll from "./Scroll";
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      robots: [],
+function App() {
+  const [robots, setRobots] = useState([]);
+  const [searchfield, setSearchField] = useState("");
+  const [count, setCount] = useState(0);
 
-      searchfield: "", // Stavfel korrektat
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => {
         return response.json();
       })
       .then((users) => {
-        this.setState({ robots: users });
+        setRobots(users);
       });
-  }
+  }, []);
 
-  onSearchange = (event) => {
-    this.setState({ searchfield: event.target.value });
-
-    console.log(filteredRobots);
+  const onSearchChange = (event) => {
+    setSearchField(event.target.value);
   };
 
-  render() {
-    const filteredRobots = this.state.robots.filter((robots) => {
-      return robots.name
-        .toLowerCase()
-        .includes(this.state.searchfield.toLowerCase());
-    });
-    return (
-      <div className="tc">
-        <h1 className="f1">RoboFriends</h1>
-        <SearchBox searchChange={this.onSearchange} />
-        <Scroll>
-          <CardList robots={filteredRobots} />
-        </Scroll>
-        ()
-      </div>
-    );
-  }
+  const filteredRobots = robots.filter((robots) => {
+    return robots.name.toLowerCase().includes(searchfield.toLowerCase());
+  });
+  return (
+    <div className="tc">
+      <h1 className="f1">RoboFriends</h1>
+      <button onClick={() => setCount(count + 1)}></button>
+      <SearchBox searchChange={onSearchChange} />
+      <Scroll>
+        <CardList robots={filteredRobots} />
+      </Scroll>
+      ()
+    </div>
+  );
 }
 
 export default App;
